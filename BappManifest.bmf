@@ -1,13 +1,12 @@
 Uuid: 296e9a0730384be4b2fffef7b4e19b1f
-ExtensionType: 2
-Name: InQL - Introspection GraphQL Scanner
+ExtensionType: 1
+Name: InQL - GraphQL Scanner
 RepoName: inql
-ScreenVersion: 4.0.6
-SerialVersion: 14
+ScreenVersion: 5.0.0
+SerialVersion: 15
 MinPlatformVersion: 2
 ProOnly: False
-Author: Andrea Brancaleoni @ Doyensec
+Author: Doyensec
 ShortDescription: InQL - A Burp Extension for GraphQL Security Testing
-EntryPoint: ext/inql_burp.py
-BuildCommand: make ext/inql_burp.py
-SupportedProducts: Pro, Community
+EntryPoint: build/InQL.jar
+BuildCommand: ./gradlew
