@@ -1,18 +1,18 @@
-<p>This Burp extension is designed to assist in your GraphQL security testing efforts.</p>
+<p>This extension is designed to assist in your GraphQL security testing efforts. It simplifies the identification of vulnerabilities within GraphQL endpoints by offering intuitive tools for schema analysis, query generation, and vulnerability detection. The main tool provided is a customizable scanner that analyzes a GraphQL endpoint or a local introspection schema file. It generates all possible queries and mutations, presenting them in an organized view for thorough analysis. Scanner results can be sent to Burp's Repeater or Intruder tools for further testing.</p>
 
-<p>The main tool provided by InQL v6.0 is a customizable scanner to analyze a GraphQL endpoint or a local
-introspection schema file. It generates all possible queries, mutations, and subscriptions, presenting them in an organized view
-for thorough analysis. Scanner results can be sent to Burp's Repeater or Intruder tools for further testing.</p>
-
-<p>Here are some other features that make InQL v6.0 an indispensable tool for your auditing needs:</p>
-
+<h2>Features</h2>
 <ul>
-	<li>Points of interest analysis for identification of PII, authentication, authorization, and other sensitive data in GraphQL schema.</li>
-	<li>The new Attacker component for batch GraphQL attacks, handy for testing rate limit bypasses and DoS vectors.</li>
-	<li>Identification of GraphQL endpoints and development console such as GraphiQL, and GraphQL Voyager</li>
-	<li>Integration of a custom GraphQL tab in Burp's native HTTP message editor, visualizing GraphQL payload.</li>
-	<li>Circular references detection, allowing to easily identify queries potentially vulnerable to DoS attacks.</li>
-	<li>Configuration of the tool via a custom settings tab for more precise control.</li>
+  <li><strong>Scanner:</strong> The core feature for analyzing GraphQL endpoints or introspection schema files. It auto-generates queries, mutations, and subscriptions, offering customizable scan options, including query depth, indentation, and points of interest analysis for detecting vulnerabilities. It also supports circular reference detection, enhanced Burp integration, and custom headers per domain for more precise testing.</li>
+  <li><strong>Batch Queries:</strong> Run batch GraphQL attacks to test for rate limit bypasses and DoS vectors.</li>
+  <li><strong>GraphQL Tab in Burp Message Editor:</strong> Visualize and modify GraphQL payloads directly within Burp's native HTTP message editor.</li>
+  <li><strong>Schema Visualization:</strong> Send analyzed schemas to GraphiQL or GraphQL Voyager servers for enhanced analysis and visualization.</li>
 </ul>
 
-<p>Happy testing and stay tuned for more updates!</p>
+<h2>Scanner details</h2>
+<ul>
+  <li><strong>Customizable Scans:</strong> InQL offers the flexibility to customize your scans. Adjust the depth of generated queries or the number of spaces used for indentation. You can also perform "Points of Interest" scans to detect potential vulnerabilities in the GraphQL schema.</li>
+  <li><strong>Points of Interest Analysis:</strong> After running a Points of Interest scan, you are presented with a rich data set covering a variety of potential vulnerabilities. You can enable or disable these categories according to your needs.</li>
+  <li><strong>Circular References Detection:</strong> InQL implements circular reference detection. After analyzing the schema, it displays potentially vulnerable queries in the scanner results view.</li>
+  <li><strong>Enhanced Interactions with Burp:</strong> InQL seamlessly integrates with Burp, enabling you to generate queries directly from any GraphQL request in Burp. You can also send auto-generated queries to other Burp tools for further analysis.</li>
+  <li><strong>Custom Headers:</strong> You have the ability to set custom headers per domain, with the domain list auto-populated from observed traffic.</li>
+</ul>
