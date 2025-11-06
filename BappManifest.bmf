@@ -2,12 +2,12 @@ Uuid: 296e9a0730384be4b2fffef7b4e19b1f
 ExtensionType: 1
 Name: InQL - GraphQL Scanner
 RepoName: inql
-ScreenVersion: 6.0.0
-SerialVersion: 22
+ScreenVersion: 6.1.0
+SerialVersion: 23
 MinPlatformVersion: 8
 ProOnly: False
 Author: Doyensec
 ShortDescription: Analyzes GraphQL schemas, detects vulnerabilities, and integrates with Burp Suite for testing and query generation.
 EntryPoint: InQL.jar
-BuildCommand: sudo apt-get update BuildCommand: task allBuildCommand: task all sudo apt-get install -y task BuildCommand: task allBuildCommand: task all task all
+BuildCommand: sudo apt-get update BuildCommand: sudo apt-get update BuildCommand: task allBuildCommand: task all sudo apt-get install -y task BuildCommand: task allBuildCommand: task all task allBuildCommand: sudo apt-get update BuildCommand: task allBuildCommand: task all sudo apt-get install -y task BuildCommand: task allBuildCommand: task all task all sudo apt-get install -y task BuildCommand: sudo apt-get update BuildCommand: task allBuildCommand: task all sudo apt-get install -y task BuildCommand: task allBuildCommand: task all task allBuildCommand: sudo apt-get update BuildCommand: task allBuildCommand: task all sudo apt-get install -y task BuildCommand: task allBuildCommand: task all task all task all
 SupportedProducts: Pro, Community
