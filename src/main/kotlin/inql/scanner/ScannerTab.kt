@@ -13,6 +13,7 @@ import inql.exceptions.EmptyOrIncorrectWordlistException
 import inql.graphql.GQLSchema
 import inql.graphql.Introspection
 import inql.savestate.SavesAndLoadData
+import inql.Config
 import inql.savestate.SavesDataToProject
 import inql.savestate.getSaveStateKeys
 import inql.scanner.scanconfig.ScanConfigView
@@ -21,10 +22,14 @@ import inql.ui.EditableTab
 import inql.ui.ErrorDialog
 import inql.utils.withUpsertedHeaders
 import kotlinx.coroutines.*
+import java.awt.BorderLayout
 import java.awt.CardLayout
 import java.io.File
 import java.net.URI
 import java.net.URISyntaxException
+import javax.swing.BoxLayout
+import javax.swing.JLabel
+import javax.swing.JOptionPane
 import javax.swing.JPanel
 
 class ScannerTab(val scanner: Scanner, val id: Int) : JPanel(CardLayout()), SavesAndLoadData {
@@ -122,6 +127,7 @@ class ScannerTab(val scanner: Scanner, val id: Int) : JPanel(CardLayout()), Save
     fun cancel() {
         bruteforcerJob?.cancel()
         this.scanConfigView.setBusy(false)
+        this.scanConfigView.setBruteforcerRunning(false)
     }
 
     fun showConfigView() {
@@ -167,9 +173,15 @@ class ScannerTab(val scanner: Scanner, val id: Int) : JPanel(CardLayout()), Save
     }
 
     fun launchBruteforcer() {
+        if (this.bruteforcerJob?.isActive == true) {
+            Logger.debug("Bruteforcer already running, ignoring duplicate launch request")
+            return
+        }
         if (this.scanConfigView.verifyAndReturnUrl() == null) return
+        if (!this.shouldStartBruteforce()) return
         this.normalizeHeaders()
         this.scanConfigView.setBusy(true)
+        this.scanConfigView.setBruteforcerRunning(true)
         bruteforcerJob = coroutineScope.launch {
             try {
                 this@ScannerTab.bruteforce()
@@ -177,8 +189,48 @@ class ScannerTab(val scanner: Scanner, val id: Int) : JPanel(CardLayout()), Save
                 // This block runs whether the coroutine completes or is cancelled
                 withContext(Dispatchers.Main) {
                     this@ScannerTab.scanConfigView.setBusy(false)
+                    this@ScannerTab.scanConfigView.setBruteforcerRunning(false)
                 }
+                this@ScannerTab.bruteforcerJob = null
             }
+        }
+    }
+
+    private fun shouldStartBruteforce(): Boolean {
+        val summary = buildBruteforceSummary()
+        val summaryPanel = JPanel().apply {
+            layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
+            summary.trimEnd().lines().forEach { line ->
+                add(JLabel(line))
+            }
+
+            add(JLabel(" "))
+            add(JLabel("If you want to change the settings, you can click 'Cancel' and open extension settings."))
+            add(JLabel(" "))
+        }
+        val panel = JPanel(BorderLayout()).apply {
+            add(JLabel("Schema bruteforcer will run with the following settings:"), BorderLayout.NORTH)
+            add(summaryPanel, BorderLayout.CENTER)
+        }
+        val result = JOptionPane.showOptionDialog(
+            Burp.Montoya.userInterface().swingUtils().suiteFrame(),
+            panel,
+            "Do you want to start schema bruteforcer?",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            arrayOf("Start", "Cancel"),
+            "Start"
+        )
+        return result == JOptionPane.YES_OPTION
+    }
+
+    private fun buildBruteforceSummary(): String {
+        return buildString {
+            appendLine("Depth limit: ${Config.getInstance().getInt("bruteforcer.depth_limit")}")
+            appendLine("Bucket size: ${Config.getInstance().getInt("bruteforcer.bucket_size")}")
+            appendLine("Number of threads: ${Config.getInstance().getInt("bruteforcer.concurrency_limit")}")
+            appendLine("Bruteforce arguments: ${Config.getInstance().getBoolean("bruteforcer.bruteforce_arguments")}")
         }
     }
 
@@ -225,6 +277,8 @@ class ScannerTab(val scanner: Scanner, val id: Int) : JPanel(CardLayout()), Save
         } catch (e: EmptyOrIncorrectWordlistException) {
             scanFailed(e.toString())
             return
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             scanFailed("Failed to bruteforce schema")
             Logger.debug(e.stackTraceToString())
@@ -316,6 +370,7 @@ class ScannerTab(val scanner: Scanner, val id: Int) : JPanel(CardLayout()), Save
 
     private fun scanCompleted() {
         this.scanConfigView.setBusy(false) // Do we need this?
+        this.scanConfigView.setBruteforcerRunning(false)
         this.showView(SCAN_RESULT_VIEW)
         this.scanResultsView.refresh()
         this.scanner.introspectionCache.putIfNewer(url = this.url, scanResult = this.scanResults.last())
@@ -324,6 +379,7 @@ class ScannerTab(val scanner: Scanner, val id: Int) : JPanel(CardLayout()), Save
     private fun scanFailed(reason: String?, logToError: Boolean = true) {
         if (!reason.isNullOrBlank()) ErrorDialog("Scan failed: $reason", logToError)
         this.scanConfigView.setBusy(false)
+        this.scanConfigView.setBruteforcerRunning(false)
     }
 
     fun getTabTitle(): String {
