@@ -224,7 +224,7 @@ open class InQLTabbedPane: TabbedPane() {
     init {
         tabbedPane.apply {
             // Add "Settings" button on the right end
-            trailingComponent = BorderPanel(-2, 0, 2, 0).apply {
+            trailingComponent = BorderPanel(3, 0, 0, 0).apply {
                 add(SettingsTabButton())
             }
         }

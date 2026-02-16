@@ -15,11 +15,11 @@ plugins {
 }
 
 dependencies {
-    compileOnly 'com.formdev:flatlaf:3.7'
-    compileOnly 'com.formdev:flatlaf-extras:3.7'
+    implementation 'com.formdev:flatlaf:3.7'
+    implementation 'com.formdev:flatlaf-extras:3.7'
 
-    implementation 'net.portswigger.burp.extender:burp-extender-api:2.3'
-    implementation 'net.portswigger.burp.extensions:montoya-api:2023.5'
+    compileOnly 'net.portswigger.burp.extender:burp-extender-api:2.3'
+    compileOnly 'net.portswigger.burp.extensions:montoya-api:2023.5'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0'
     implementation 'org.apache.commons:commons-text:1.11.0'
@@ -69,12 +69,8 @@ build {
 
 defaultTasks "build"
 
-// build standalone jar with bundled dependencies
 jar {
-    manifest {
-        attributes('Class-Path': configurations.compileClasspath.collect { it.getName() }.join(' '))
-    }
-    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     destinationDirectory = rootDir
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     archiveFileName = "InQL.jar"
